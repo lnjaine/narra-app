@@ -244,7 +244,76 @@ The key insight: **narrators are the distribution channel**. Every narrator Narr
 
 ---
 
+## Ideias de Produto Pendentes
 
+### Cast to Speaker (Spotify Connect style)
+O ouvinte no celular vê um botão para "jogar" o áudio para dispositivos na rede Wi-Fi — Sonos, Alexa, Google Home, AirPlay. Isso resolve o caso de uso principal: TV no mudo + narração saindo na caixa de som da sala.
+
+**Investigar:** Web Audio API + AirPlay/Chromecast SDK. Pode ser que o browser já ofereça isso via MediaSession API ou o botão nativo de cast do Chrome.
+
+### Analytics para Narradores
+Por enquanto, manter simples — o narrador não precisa de dashboard complexo. O que importa:
+- Quantos ouvintes ao vivo (já temos)
+- Total de ouvintes por transmissão (pós-jogo)
+- Pode evoluir para: tempo médio de escuta, pico de audiência, reações recebidas
+
+### Pitch para Primeiro Narrador — O que oferecer?
+
+**Proposta de valor:**
+- Página própria no Narra (perfil verificado)
+- Revenue share: narrador ganha X% dos assinantes que vieram por ele
+- Modelo possível: R$0,01 por minuto ouvido (como Spotify) ou % de assinatura premium
+
+**Modelo de financiamento da primeira transmissão grande:**
+- Opção A: Narra banca os custos de infra (LiveKit ~$50-200) e o narrador promove de graça em troca de ser "founding narrator"
+- Opção B: Patrocínio de marca local (ex: casa de apostas, cerveja) para a primeira transmissão
+- Opção C: Crowdfunding entre os fãs — "contribua R$2 para ter a narração do [influenciador] no próximo jogo"
+
+**Script de abordagem (DM/email):**
+> "E aí [nome], tudo bem? Sou o Leandro, fundador do Narra — um app que deixa qualquer pessoa narrar jogos ao vivo pro celular dos amigos. Tipo um Spotify de narração esportiva. A gente tá montando o time de narradores fundadores e pensei em você. A ideia: você narra o [jogo], seus seguidores ouvem pelo Narra no celular enquanto assistem na TV. Você ganha uma página sua no app e revenue share por ouvinte. Bora trocar uma ideia?"
+
+---
+
+## Teste Piloto: Leandro narra Flamengo (21/mar)
+
+### Objetivo
+Validar o fluxo completo narrador → ouvintes com amigos reais.
+
+### O jogo
+**Flamengo vs Fluminense** — sábado 21/mar, 20:00 (Brasileirão 2026)
+
+### Checklist pré-jogo
+
+**Técnico (até sexta 20/mar):**
+- [ ] Testar fluxo completo no app em produção (narra-app.vercel.app)
+- [ ] Criar stream para o jogo Fla-Flu
+- [ ] Testar áudio do microfone no Studio (qualidade, delay)
+- [ ] Testar em 2 devices simultaneamente (narrador + ouvinte)
+- [ ] Verificar se funciona em 4G (não só Wi-Fi)
+- [ ] Testar no iPhone Safari + Android Chrome
+
+**Distribuição (até sábado 16h):**
+- [ ] Mandar link no grupo de WhatsApp dos amigos
+- [ ] Mensagem: "Galera, mutam a Globo e ouvem minha narração ao vivo pelo celular: [link]. É só clicar, entrar no jogo Fla-Flu e tocar na minha transmissão"
+- [ ] Pedir pra pelo menos 3-5 amigos confirmarem que vão testar
+
+**Durante o jogo:**
+- [ ] Entrar no Studio 15min antes (19:45)
+- [ ] Testar mic uma última vez
+- [ ] Narrar pelo menos o primeiro tempo (45min)
+- [ ] Pedir feedback ao vivo no WhatsApp: "tão ouvindo bem?"
+
+**Pós-jogo:**
+- [ ] Coletar feedback: qualidade do áudio, delay, experiência geral
+- [ ] Perguntar: "vocês usariam isso com um narrador que vocês seguem?"
+- [ ] Anotar bugs e melhorias
+
+### Métricas de sucesso
+- 3+ amigos ouvindo simultaneamente
+- Áudio funciona sem cortes por 45min
+- Pelo menos 1 pessoa diz "isso é muito melhor que a TV"
+
+---
 
 | Risk | Likelihood | Impact | Mitigation |
 |------|-----------|--------|------------|
