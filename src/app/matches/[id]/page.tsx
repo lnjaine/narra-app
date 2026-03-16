@@ -80,11 +80,21 @@ export default async function MatchDetailPage({
         </div>
       </div>
 
-      {/* Narrators streaming this match */}
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold">Narradores</h2>
-        <CreateStreamButton eventId={event.id} eventTitle={event.title} />
+      {/* Create stream CTA */}
+      <div className="bg-green-500/10 border border-green-500/20 rounded-2xl p-4 mb-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="font-medium text-sm">Quer narrar este jogo?</p>
+            <p className="text-xs text-zinc-500">Crie sua transmissão e chame seus amigos</p>
+          </div>
+          <CreateStreamButton eventId={event.id} eventTitle={event.title} />
+        </div>
       </div>
+
+      {/* Narrators streaming this match */}
+      <h2 className="text-lg font-semibold mb-4">
+        Narradores {streams && streams.length > 0 && `(${streams.length})`}
+      </h2>
 
       <StreamList streams={streams ?? []} eventId={event.id} />
     </div>

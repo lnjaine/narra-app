@@ -15,7 +15,7 @@ export default function HomePage() {
           <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-4">
             Muta a TV.
             <br />
-            <span className="text-green-500">Escolhe a voz.</span>
+            <span className="text-green-500">Escolha a narração favorita.</span>
           </h1>
           <p className="text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto mb-10">
             Troque a narração chata da TV por comentaristas que você ama.

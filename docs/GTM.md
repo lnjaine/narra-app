@@ -191,7 +191,60 @@ The key insight: **narrators are the distribution channel**. Every narrator Narr
 
 ---
 
-## Risks & Mitigations
+## Hipóteses para Validação
+
+### Hipótese 1: Influenciadores de Clubes como Motor de Crescimento
+
+**Tese:** Cada grande clube brasileiro tem dezenas de influenciadores com audiências fiéis (Flamengo Depressão, Raça Rubro-Negra, Palmeiras da Depressão, etc.). Oferecer a eles uma página própria no Narra com modelo de comissão — similar ao Spotify, onde o narrador ganha com base no número de minutos ouvidos ou ouvintes únicos — cria incentivo financeiro para promover a plataforma.
+
+**Como validar:**
+- Mapear os top 5 influenciadores de cada um dos 12 maiores clubes do Brasil
+- Propor parceria: "Tenha sua página no Narra, ganhe por ouvinte"
+- Modelo de revenue share: narrador recebe por minuto de escuta (como royalties do Spotify)
+- Meta: 3-5 influenciadores aceitarem testar no primeiro mês
+
+**Por que pode funcionar:** O influenciador já tem a audiência. Ele só precisa de um motivo financeiro para direcionar. O Narra vira mais uma fonte de receita para o creator.
+
+---
+
+### Hipótese 2: Narração com IA em Tempo Real
+
+**Tese:** Se não conseguirmos narrador humano para um jogo, a IA pode preencher a lacuna. Usar modelos de voz (ElevenLabs, etc.) para gerar narração em tempo real com base em dados do jogo (APIs de eventos como gols, faltas, escanteios) com um pequeno delay.
+
+**Como validar:**
+- Prototipar com uma API de eventos de futebol (ex: SportMonks, API-Football) que envia eventos em tempo real
+- Conectar a um modelo de TTS (text-to-speech) para narrar os eventos com voz natural
+- Testar se o delay é aceitável (provavelmente 5-15s atrás do broadcast)
+- Medir qualidade percebida vs narração humana
+
+**Desafios conhecidos:**
+- Latência: dados do jogo chegam com delay, narração por IA adiciona mais delay
+- Naturalidade: IA ainda não tem a emoção de um narrador humano no gol
+- Pode funcionar melhor como "narração base" que é incrementada por narrador humano
+
+---
+
+### Hipótese 3: Conteúdo Viral com Vozes Icônicas (Canal YouTube)
+
+**Tese:** Criar um canal no YouTube com narrações de vozes icônicas brasileiras recriadas com IA (estilo ElevenLabs) narrando momentos históricos e jogos. Ex: "Cid Moreira narra a final da Libertadores do Flamengo 2019". Usar isso como motor de viralização e awareness para o Narra.
+
+**Como validar:**
+- Criar 3-5 vídeos teste com vozes clonadas de figuras icônicas (Cid Moreira, Silvio Santos, etc.) narrando momentos épicos do futebol
+- Publicar no YouTube, TikTok e Instagram Reels
+- Medir engajamento: views, shares, comentários
+- CTA no final: "Quer ouvir narrações ao vivo assim? Baixe o Narra"
+
+**Por que pode viralizar:**
+- O Brasil ama memes e mashups culturais
+- "Cid Moreira narrando gol do Gabigol" é intrinsecamente compartilhável
+- Gera curiosidade sobre o produto sem precisar de um jogo ao vivo
+- Baixo custo de produção (IA + edição simples)
+
+**Riscos:** Questões legais com uso de vozes de pessoas reais (precisa avaliar). Pode começar com vozes ficcionais ou com autorização.
+
+---
+
+
 
 | Risk | Likelihood | Impact | Mitigation |
 |------|-----------|--------|------------|

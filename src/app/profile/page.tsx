@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Mic, User, Save, Radio } from "lucide-react";
+import { Mic, User, Save, Radio, Check, AlertCircle, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/lib/hooks/use-auth";
@@ -18,6 +18,7 @@ export default function ProfilePage() {
   const [bio, setBio] = useState("");
   const [style, setStyle] = useState("");
   const [saving, setSaving] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<"idle" | "success" | "error">("idle");
   const [myStreams, setMyStreams] = useState<Stream[]>([]);
 
   useEffect(() => {
@@ -47,7 +48,8 @@ export default function ProfilePage() {
   const handleSave = async () => {
     if (!user) return;
     setSaving(true);
-    await supabase
+    setSaveStatus("idle");
+    const { error } = await supabase
       .from("profiles")
       .update({
         name: name.trim(),
@@ -57,6 +59,13 @@ export default function ProfilePage() {
       })
       .eq("id", user.id);
     setSaving(false);
+    if (error) {
+      setSaveStatus("error");
+      console.error("Profile save error:", error);
+    } else {
+      setSaveStatus("success");
+    }
+    setTimeout(() => setSaveStatus("idle"), 3000);
   };
 
   if (loading) {
@@ -146,14 +155,74 @@ export default function ProfilePage() {
         </div>
 
         <Button onClick={handleSave} disabled={saving} className="w-full">
-          <Save className="w-4 h-4" />
-          {saving ? "Salvando..." : "Salvar perfil"}
+          {saveStatus === "success" ? (
+            <Check className="w-4 h-4" />
+          ) : saveStatus === "error" ? (
+            <AlertCircle className="w-4 h-4" />
+          ) : (
+            <Save className="w-4 h-4" />
+          )}
+          {saving
+            ? "Salvando..."
+            : saveStatus === "success"
+              ? "Salvo!"
+              : saveStatus === "error"
+                ? "Erro ao salvar"
+                : "Salvar perfil"}
         </Button>
+
+        {saveStatus === "success" && (
+          <p className="text-sm text-green-400 text-center">
+            Perfil atualizado com sucesso!
+          </p>
+        )}
+        {saveStatus === "error" && (
+          <p className="text-sm text-red-400 text-center">
+            Erro ao salvar. Tente novamente.
+          </p>
+        )}
       </div>
+
+      {/* Become narrator CTA */}
+      {(!profile.role || profile.role === "listener") && (
+        <section className="mt-8">
+          <div className="bg-green-500/10 border border-green-500/20 rounded-2xl p-6 text-center">
+            <Mic className="w-10 h-10 text-green-500 mx-auto mb-3" />
+            <h2 className="text-lg font-bold mb-2">Quer narrar?</h2>
+            <p className="text-sm text-zinc-400 mb-4">
+              Escolha um estilo de narração acima, salve seu perfil e depois vá em um jogo para começar a narrar!
+            </p>
+            <Link href="/matches">
+              <Button>
+                <Radio className="w-4 h-4" />
+                Ver jogos disponíveis
+              </Button>
+            </Link>
+          </div>
+        </section>
+      )}
+
+      {/* Quick narrate CTA for narrators */}
+      {profile.role && profile.role !== "listener" && (
+        <section className="mt-8">
+          <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 text-center">
+            <Radio className="w-8 h-8 text-green-500 mx-auto mb-3" />
+            <p className="text-sm text-zinc-400 mb-4">
+              Escolha um jogo para começar sua narração ao vivo
+            </p>
+            <Link href="/matches">
+              <Button>
+                <Mic className="w-4 h-4" />
+                Narrar um jogo
+              </Button>
+            </Link>
+          </div>
+        </section>
+      )}
 
       {/* My streams */}
       {myStreams.length > 0 && (
-        <section className="mt-10">
+        <section className="mt-8">
           <h2 className="text-lg font-semibold mb-4">Minhas transmissões</h2>
           <div className="space-y-2">
             {myStreams.map((stream) => (
@@ -189,6 +258,17 @@ export default function ProfilePage() {
           </div>
         </section>
       )}
+
+      {/* Sign out */}
+      <section className="mt-8 pb-8">
+        <button
+          onClick={signOut}
+          className="flex items-center gap-2 text-sm text-zinc-500 hover:text-red-400 transition-colors mx-auto"
+        >
+          <LogOut className="w-4 h-4" />
+          Sair da conta
+        </button>
+      </section>
     </div>
   );
 }
