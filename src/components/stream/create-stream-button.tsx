@@ -32,19 +32,25 @@ export function CreateStreamButton({
       return;
     }
 
-    if (!title.trim()) return;
+    const finalTitle = title.trim() || `Narração do ${eventTitle}`;
 
     setIsCreating(true);
     try {
       const res = await fetch("/api/streams", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ event_id: eventId, title: title.trim() }),
+        body: JSON.stringify({ event_id: eventId, title: finalTitle }),
       });
       const stream = await res.json();
+      console.log("Stream response:", stream);
       if (stream.id) {
         router.push(`/studio/${stream.id}`);
+      } else {
+        alert(`Erro ao criar: ${stream.error || "Tente novamente"}`);
       }
+    } catch (err) {
+      console.error("Create stream error:", err);
+      alert("Erro de conexão. Tente novamente.");
     } finally {
       setIsCreating(false);
     }
