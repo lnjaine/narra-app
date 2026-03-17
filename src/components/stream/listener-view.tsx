@@ -25,6 +25,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { useSync } from "@/lib/hooks/use-sync";
+import { useMediaSession } from "@/lib/hooks/use-media-session";
+import { useAudioCapture } from "@/lib/hooks/use-audio-capture";
+import { AudioCastControls } from "@/components/stream/audio-cast-controls";
 import Link from "next/link";
 import type { Profile, Event, Stream } from "@/types/database";
 import { RoomEvent } from "livekit-client";
@@ -132,6 +135,22 @@ function ListenerUI({
     { id: number; type: string; x: number }[]
   >([]);
   const [narratorSyncTime, setNarratorSyncTime] = useState<number | null>(null);
+
+  // Media Session for lock screen controls & background audio
+  useMediaSession({
+    title: stream.title || "Narracao ao vivo",
+    artist: narrator?.name || "Narrador",
+    album: `${event.home_team} vs ${event.away_team}`,
+    artworkUrl: narrator?.avatar_url || undefined,
+    onPlay: () => setMuted(false),
+    onPause: () => setMuted(true),
+    isPlaying: !muted,
+  });
+
+  // Audio capture for AirPlay casting
+  const { audioRef: castAudioRef, captureStream } = useAudioCapture(
+    muted ? 0 : volume / 100
+  );
 
   // Listen for sync signals from narrator via data channel
   const onDataReceived = useCallback(
@@ -291,7 +310,7 @@ function ListenerUI({
         )}
       </div>
 
-      {/* Volume */}
+      {/* Volume & Cast */}
       <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-5 mb-6">
         <div className="flex items-center gap-4">
           <button onClick={() => setMuted(!muted)} className="text-zinc-400 hover:text-white">
@@ -315,6 +334,10 @@ function ListenerUI({
           <span className="text-xs text-zinc-500 w-8 text-right">
             {muted ? 0 : volume}%
           </span>
+          <AudioCastControls
+            audioRef={castAudioRef}
+            captureStream={captureStream}
+          />
         </div>
       </div>
 

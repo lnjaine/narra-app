@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { YouTubeEmbed } from "@/components/stream/youtube-embed";
 import { useAuth } from "@/lib/hooks/use-auth";
 import type { Stream, Event } from "@/types/database";
 
@@ -110,6 +111,7 @@ function StudioUI({
   const [micEnabled, setMicEnabled] = useState(true);
   const [peakListeners, setPeakListeners] = useState(stream.peak_listeners);
   const [syncSent, setSyncSent] = useState(false);
+  const [hasYouTube, setHasYouTube] = useState(false);
   const startTimeRef = useRef<Date | null>(
     stream.started_at ? new Date(stream.started_at) : null
   );
@@ -178,9 +180,9 @@ function StudioUI({
   }, [sendData]);
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-6">
+    <div className={`mx-auto px-4 py-6 ${hasYouTube ? "max-w-2xl" : "max-w-lg"}`}>
       {/* Header */}
-      <div className="text-center mb-8">
+      <div className="text-center mb-4">
         <Badge variant={isLive ? "live" : "scheduled"} className="mb-3">
           {isLive ? "Ao Vivo" : "Preparando"}
         </Badge>
@@ -189,6 +191,12 @@ function StudioUI({
           {event.home_team} vs {event.away_team}
         </p>
       </div>
+
+      {/* YouTube Embed */}
+      <YouTubeEmbed
+        onVideoLoaded={() => setHasYouTube(true)}
+        onRemoved={() => setHasYouTube(false)}
+      />
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-3 mb-8">
