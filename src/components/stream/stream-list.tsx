@@ -1,8 +1,8 @@
 "use client";
 
-import { Headphones, Mic, Users } from "lucide-react";
+import { Mic, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { ShareButton } from "@/components/stream/share-button";
 import Link from "next/link";
 import type { StreamWithNarrator } from "@/types/database";
 
@@ -71,6 +71,7 @@ export function StreamList({ streams, eventId }: StreamListProps) {
                 {stream.listener_count}
               </span>
             )}
+            <ShareButton streamId={stream.id} streamTitle={stream.title} variant="icon" />
             <Badge variant={stream.status === "live" ? "live" : "scheduled"}>
               {stream.status === "live" ? "Ao Vivo" : "Em breve"}
             </Badge>

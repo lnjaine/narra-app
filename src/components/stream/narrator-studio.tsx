@@ -19,6 +19,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { YouTubeEmbed } from "@/components/stream/youtube-embed";
+import { ShareButton } from "@/components/stream/share-button";
 import { useAuth } from "@/lib/hooks/use-auth";
 import type { Stream, Event } from "@/types/database";
 
@@ -190,6 +191,9 @@ function StudioUI({
         <p className="text-sm text-zinc-500 mt-1">
           {event.home_team} vs {event.away_team}
         </p>
+        <div className="mt-3">
+          <ShareButton streamId={stream.id} streamTitle={stream.title} />
+        </div>
       </div>
 
       {/* YouTube Embed */}
