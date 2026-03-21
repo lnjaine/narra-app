@@ -21,6 +21,8 @@ export async function PATCH(
   const updateData: Record<string, string | number | null> = {};
   if (body.status) updateData.status = body.status;
   if (body.title) updateData.title = body.title;
+  if (body.listener_count !== undefined)
+    updateData.listener_count = body.listener_count;
   if (body.peak_listeners !== undefined)
     updateData.peak_listeners = body.peak_listeners;
   if (body.sync_offset_ms !== undefined)

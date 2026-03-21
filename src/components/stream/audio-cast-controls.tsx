@@ -6,11 +6,15 @@ import { Airplay } from "lucide-react";
 interface AudioCastControlsProps {
   audioRef: ((el: HTMLAudioElement | null) => void) | null;
   captureStream: MediaStream | null;
+  onActivate?: () => void;
+  isActive?: boolean;
 }
 
 export function AudioCastControls({
   audioRef,
   captureStream,
+  onActivate,
+  isActive,
 }: AudioCastControlsProps) {
   const [airplayAvailable, setAirplayAvailable] = useState(false);
   const internalAudioRef = useRef<HTMLAudioElement | null>(null);
@@ -26,10 +30,19 @@ export function AudioCastControls({
 
   // Detect AirPlay availability
   useEffect(() => {
+    // Only render the audio element when casting is active
+    if (!isActive) {
+      // Check if Safari supports AirPlay at all
+      const testEl = document.createElement("audio");
+      if ("webkitShowPlaybackTargetPicker" in testEl) {
+        setAirplayAvailable(true);
+      }
+      return;
+    }
+
     const audio = internalAudioRef.current;
     if (!audio) return;
 
-    // Check Safari AirPlay support
     if ("webkitShowPlaybackTargetPicker" in audio) {
       const handler = (e: Event) => {
         const event = e as CustomEvent & { availability?: string };
@@ -40,7 +53,6 @@ export function AudioCastControls({
         "webkitplaybacktargetavailabilitychanged",
         handler
       );
-      // Assume available on Safari if the API exists (event may not fire immediately)
       setAirplayAvailable(true);
 
       return () => {
@@ -50,16 +62,29 @@ export function AudioCastControls({
         );
       };
     }
-  }, [captureStream]);
+  }, [captureStream, isActive]);
 
   const showPicker = useCallback(() => {
+    // Activate audio capture if not yet active
+    if (!isActive && onActivate) {
+      onActivate();
+      // Wait a tick for the audio element to render, then show picker
+      setTimeout(() => {
+        const audio = internalAudioRef.current;
+        if (audio && "webkitShowPlaybackTargetPicker" in audio) {
+          (audio as any).webkitShowPlaybackTargetPicker();
+        }
+      }, 100);
+      return;
+    }
+
     const audio = internalAudioRef.current;
     if (!audio) return;
 
     if ("webkitShowPlaybackTargetPicker" in audio) {
       (audio as any).webkitShowPlaybackTargetPicker();
     }
-  }, []);
+  }, [isActive, onActivate]);
 
   // Update srcObject when captureStream changes
   useEffect(() => {
@@ -72,13 +97,15 @@ export function AudioCastControls({
 
   return (
     <>
-      {/* Hidden audio element for casting */}
-      <audio
-        ref={setRef}
-        playsInline
-        x-webkit-airplay="allow"
-        style={{ display: "none" }}
-      />
+      {/* Hidden audio element for casting - only render when active */}
+      {isActive && (
+        <audio
+          ref={setRef}
+          playsInline
+          x-webkit-airplay="allow"
+          style={{ display: "none" }}
+        />
+      )}
 
       {/* AirPlay button */}
       {airplayAvailable && (

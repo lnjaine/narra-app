@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import {
   LiveKitRoom,
   RoomAudioRenderer,
-  useRoomContext,
   useParticipants,
   useDataChannel,
 } from "@livekit/components-react";
@@ -30,7 +29,6 @@ import { useAudioCapture } from "@/lib/hooks/use-audio-capture";
 import { AudioCastControls } from "@/components/stream/audio-cast-controls";
 import Link from "next/link";
 import type { Profile, Event, Stream } from "@/types/database";
-import { RoomEvent } from "livekit-client";
 
 interface ListenerViewProps {
   stream: Stream;
@@ -136,21 +134,24 @@ function ListenerUI({
   >([]);
   const [narratorSyncTime, setNarratorSyncTime] = useState<number | null>(null);
 
+  // Stable callbacks for media session
+  const handlePlay = useCallback(() => setMuted(false), []);
+  const handlePause = useCallback(() => setMuted(true), []);
+
   // Media Session for lock screen controls & background audio
   useMediaSession({
     title: stream.title || "Narracao ao vivo",
     artist: narrator?.name || "Narrador",
     album: `${event.home_team} vs ${event.away_team}`,
     artworkUrl: narrator?.avatar_url || undefined,
-    onPlay: () => setMuted(false),
-    onPause: () => setMuted(true),
+    onPlay: handlePlay,
+    onPause: handlePause,
     isPlaying: !muted,
   });
 
-  // Audio capture for AirPlay casting
-  const { audioRef: castAudioRef, captureStream } = useAudioCapture(
-    muted ? 0 : volume / 100
-  );
+  // Audio capture for AirPlay casting - lazy, only activates on demand
+  const audioVolume = muted ? 0 : volume / 100;
+  const { audioRef: castAudioRef, captureStream, activate: activateCast, isActive: isCastActive } = useAudioCapture(audioVolume);
 
   // Listen for sync signals from narrator via data channel
   const onDataReceived = useCallback(
@@ -167,27 +168,27 @@ function ListenerUI({
 
   useDataChannel("sync", onDataReceived);
 
-  const handleSync = () => {
+  const handleSync = useCallback(() => {
     if (narratorSyncTime) {
       listenerSync(narratorSyncTime);
     }
-  };
+  }, [narratorSyncTime, listenerSync]);
 
-  const handleReaction = (type: string) => {
+  const handleReaction = useCallback((type: string) => {
     const id = Date.now();
     const x = Math.random() * 80 + 10;
     setReactions((prev) => [...prev, { id, type, x }]);
     setTimeout(() => {
       setReactions((prev) => prev.filter((r) => r.id !== id));
     }, 1500);
-  };
+  }, []);
 
-  const reactionEmojis = [
+  const reactionEmojis = useMemo(() => [
     { type: "fire", icon: Flame, label: "Fogo" },
     { type: "laugh", icon: Laugh, label: "Risada" },
     { type: "goal", icon: Goal, label: "Gol" },
     { type: "boo", icon: ThumbsDown, label: "Vaia" },
-  ];
+  ], []);
 
   return (
     <div className="max-w-lg mx-auto px-4 py-6 min-h-[80vh] flex flex-col">
@@ -220,8 +221,8 @@ function ListenerUI({
               <Volume2 className="w-10 h-10 text-green-500" />
             </div>
           )}
-          {/* Pulse ring animation */}
-          <div className="absolute inset-0 rounded-full border-2 border-green-500/30 animate-pulse-ring" />
+          {/* Pulse indicator */}
+          <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-zinc-950" />
         </div>
         <h1 className="text-xl font-bold">{narrator?.name || "Narrador"}</h1>
         <p className="text-sm text-zinc-400 mt-1">{stream.title}</p>
@@ -337,6 +338,8 @@ function ListenerUI({
           <AudioCastControls
             audioRef={castAudioRef}
             captureStream={captureStream}
+            onActivate={activateCast}
+            isActive={isCastActive}
           />
         </div>
       </div>

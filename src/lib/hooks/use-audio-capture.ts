@@ -15,89 +15,89 @@ export function useAudioCapture(volume: number) {
     new Map()
   );
   const [captureStream, setCaptureStream] = useState<MediaStream | null>(null);
+  const [isActive, setIsActive] = useState(false);
 
-  // Create AudioContext and destination on first interaction
-  const ensureContext = useCallback(() => {
+  // Only create AudioContext when casting is explicitly activated
+  const activate = useCallback(() => {
     if (ctxRef.current) return ctxRef.current;
 
     const ctx = new AudioContext();
     const gain = ctx.createGain();
     const dest = ctx.createMediaStreamDestination();
     gain.connect(dest);
+    gain.gain.value = volume;
 
     ctxRef.current = ctx;
     gainRef.current = gain;
     destRef.current = dest;
     setCaptureStream(dest.stream);
+    setIsActive(true);
+
+    // Connect any already-subscribed audio tracks
+    room.remoteParticipants.forEach((participant) => {
+      participant.audioTrackPublications.forEach((pub) => {
+        if (pub.isSubscribed && pub.track) {
+          const track = pub.track;
+          if (track.kind !== Track.Kind.Audio) return;
+          const mediaStream = track.mediaStream;
+          if (!mediaStream) return;
+          const trackId = track.sid ?? pub.trackSid;
+          if (sourcesRef.current.has(trackId)) return;
+          const source = ctx.createMediaStreamSource(mediaStream);
+          source.connect(gain);
+          sourcesRef.current.set(trackId, source);
+        }
+      });
+    });
 
     return ctx;
-  }, []);
+  }, [room, volume]);
 
-  // Connect a remote audio track to the audio graph
-  const connectTrack = useCallback(
-    (publication: RemoteTrackPublication) => {
-      const track = publication.track;
-      if (!track || track.kind !== Track.Kind.Audio) return;
-
-      const ctx = ensureContext();
-      const mediaStream = track.mediaStream;
-      if (!mediaStream) return;
-
-      const trackId = track.sid ?? publication.trackSid;
-      if (sourcesRef.current.has(trackId)) return;
-
-      const source = ctx.createMediaStreamSource(mediaStream);
-      source.connect(gainRef.current!);
-      sourcesRef.current.set(trackId, source);
-    },
-    [ensureContext]
-  );
-
-  // Disconnect a track
-  const disconnectTrack = useCallback((trackSid: string) => {
-    const source = sourcesRef.current.get(trackSid);
-    if (source) {
-      source.disconnect();
-      sourcesRef.current.delete(trackSid);
-    }
-  }, []);
-
-  // Listen for tracks being subscribed/unsubscribed
+  // Listen for new tracks only when active
   useEffect(() => {
+    if (!isActive) return;
+
     const onSubscribed = (
       _track: any,
       publication: RemoteTrackPublication,
       _participant: RemoteParticipant
     ) => {
-      if (publication.kind === Track.Kind.Audio) {
-        connectTrack(publication);
-      }
+      if (publication.kind !== Track.Kind.Audio) return;
+      const track = publication.track;
+      if (!track) return;
+      const mediaStream = track.mediaStream;
+      if (!mediaStream) return;
+
+      const ctx = ctxRef.current;
+      if (!ctx || !gainRef.current) return;
+
+      const trackId = track.sid ?? publication.trackSid;
+      if (sourcesRef.current.has(trackId)) return;
+
+      const source = ctx.createMediaStreamSource(mediaStream);
+      source.connect(gainRef.current);
+      sourcesRef.current.set(trackId, source);
     };
 
     const onUnsubscribed = (
       _track: any,
       publication: RemoteTrackPublication
     ) => {
-      disconnectTrack(publication.trackSid);
+      const source = sourcesRef.current.get(publication.trackSid);
+      if (source) {
+        source.disconnect();
+        sourcesRef.current.delete(publication.trackSid);
+      }
     };
 
     room.on(RoomEvent.TrackSubscribed, onSubscribed);
     room.on(RoomEvent.TrackUnsubscribed, onUnsubscribed);
 
-    // Connect any already-subscribed audio tracks
-    room.remoteParticipants.forEach((participant) => {
-      participant.audioTrackPublications.forEach((pub) => {
-        if (pub.isSubscribed && pub.track) {
-          connectTrack(pub);
-        }
-      });
-    });
-
     return () => {
       room.off(RoomEvent.TrackSubscribed, onSubscribed);
       room.off(RoomEvent.TrackUnsubscribed, onUnsubscribed);
     };
-  }, [room, connectTrack, disconnectTrack]);
+  }, [room, isActive]);
 
   // Sync volume to gain node
   useEffect(() => {
@@ -128,5 +128,5 @@ export function useAudioCapture(volume: number) {
     [captureStream]
   );
 
-  return { audioRef: setAudioRef, captureStream, ensureContext };
+  return { audioRef: setAudioRef, captureStream, activate, isActive };
 }

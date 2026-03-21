@@ -124,13 +124,41 @@ create policy "Users can unfollow" on follows for delete using (auth.uid() = fol
 create policy "Reactions are viewable by everyone" on reactions for select using (true);
 create policy "Authenticated users can react" on reactions for insert with check (auth.uid() = user_id);
 
--- Seed data: upcoming Brasileirao matches
+-- Seed data: real Brasileirão 2026 matches
+
+-- Rodada 8 (March 21-22, 2026)
 insert into events (sport, league, title, home_team, away_team, start_time, status) values
-  ('football', 'Brasileirão 2026', 'Flamengo vs Fluminense', 'Flamengo', 'Fluminense', '2026-03-21 20:00:00-03', 'scheduled'),
-  ('football', 'Brasileirão 2026', 'Corinthians vs Palmeiras', 'Corinthians', 'Palmeiras', '2026-03-22 16:00:00-03', 'scheduled'),
-  ('football', 'Brasileirão 2026', 'São Paulo vs Santos', 'São Paulo', 'Santos', '2026-03-22 18:30:00-03', 'scheduled'),
-  ('football', 'Brasileirão 2026', 'Grêmio vs Internacional', 'Grêmio', 'Internacional', '2026-03-23 16:00:00-03', 'scheduled'),
-  ('football', 'Brasileirão 2026', 'Botafogo vs Vasco', 'Botafogo', 'Vasco', '2026-03-23 18:30:00-03', 'scheduled'),
-  ('football', 'Brasileirão 2026', 'Atletico-MG vs Cruzeiro', 'Atletico-MG', 'Cruzeiro', '2026-03-28 21:00:00-03', 'scheduled'),
-  ('football', 'Copa do Brasil 2026', 'Flamengo vs Athletico-PR', 'Flamengo', 'Athletico-PR', '2026-03-30 19:00:00-03', 'scheduled'),
-  ('football', 'Brasileirão 2026', 'Palmeiras vs Flamengo', 'Palmeiras', 'Flamengo', '2026-04-05 21:00:00-03', 'scheduled');
+  ('football', 'Brasileirão 2026 - Rodada 8', 'RB Bragantino vs Botafogo', 'RB Bragantino', 'Botafogo', '2026-03-21 16:00:00-03', 'scheduled'),
+  ('football', 'Brasileirão 2026 - Rodada 8', 'Fluminense vs Atlético-MG', 'Fluminense', 'Atlético-MG', '2026-03-21 18:30:00-03', 'scheduled'),
+  ('football', 'Brasileirão 2026 - Rodada 8', 'São Paulo vs Palmeiras', 'São Paulo', 'Palmeiras', '2026-03-21 21:00:00-03', 'scheduled'),
+  ('football', 'Brasileirão 2026 - Rodada 8', 'Cruzeiro vs Santos', 'Cruzeiro', 'Santos', '2026-03-22 16:00:00-03', 'scheduled'),
+  ('football', 'Brasileirão 2026 - Rodada 8', 'Vasco vs Grêmio', 'Vasco', 'Grêmio', '2026-03-22 16:00:00-03', 'scheduled'),
+  ('football', 'Brasileirão 2026 - Rodada 8', 'Athletico-PR vs Coritiba', 'Athletico-PR', 'Coritiba', '2026-03-22 16:00:00-03', 'scheduled'),
+  ('football', 'Brasileirão 2026 - Rodada 8', 'Remo vs Bahia', 'Remo', 'Bahia', '2026-03-22 16:00:00-03', 'scheduled'),
+  ('football', 'Brasileirão 2026 - Rodada 8', 'Vitória vs Mirassol', 'Vitória', 'Mirassol', '2026-03-22 18:30:00-03', 'scheduled'),
+  ('football', 'Brasileirão 2026 - Rodada 8', 'Internacional vs Chapecoense', 'Internacional', 'Chapecoense', '2026-03-22 18:30:00-03', 'scheduled'),
+  ('football', 'Brasileirão 2026 - Rodada 8', 'Corinthians vs Flamengo', 'Corinthians', 'Flamengo', '2026-03-22 20:30:00-03', 'scheduled'),
+
+-- Rodada 9 (April 1-2, 2026)
+  ('football', 'Brasileirão 2026 - Rodada 9', 'Botafogo vs Mirassol', 'Botafogo', 'Mirassol', '2026-04-01 19:30:00-03', 'scheduled'),
+  ('football', 'Brasileirão 2026 - Rodada 9', 'Internacional vs São Paulo', 'Internacional', 'São Paulo', '2026-04-01 19:30:00-03', 'scheduled'),
+  ('football', 'Brasileirão 2026 - Rodada 9', 'Cruzeiro vs Vitória', 'Cruzeiro', 'Vitória', '2026-04-01 20:00:00-03', 'scheduled'),
+  ('football', 'Brasileirão 2026 - Rodada 9', 'Bahia vs Athletico-PR', 'Bahia', 'Athletico-PR', '2026-04-01 20:00:00-03', 'scheduled'),
+  ('football', 'Brasileirão 2026 - Rodada 9', 'Coritiba vs Vasco', 'Coritiba', 'Vasco', '2026-04-01 20:30:00-03', 'scheduled'),
+  ('football', 'Brasileirão 2026 - Rodada 9', 'Fluminense vs Corinthians', 'Fluminense', 'Corinthians', '2026-04-01 21:30:00-03', 'scheduled'),
+  ('football', 'Brasileirão 2026 - Rodada 9', 'Santos vs Remo', 'Santos', 'Remo', '2026-04-02 19:00:00-03', 'scheduled'),
+  ('football', 'Brasileirão 2026 - Rodada 9', 'Chapecoense vs Atlético-MG', 'Chapecoense', 'Atlético-MG', '2026-04-02 19:00:00-03', 'scheduled'),
+  ('football', 'Brasileirão 2026 - Rodada 9', 'Palmeiras vs Grêmio', 'Palmeiras', 'Grêmio', '2026-04-02 21:30:00-03', 'scheduled'),
+  ('football', 'Brasileirão 2026 - Rodada 9', 'RB Bragantino vs Flamengo', 'RB Bragantino', 'Flamengo', '2026-04-02 21:30:00-03', 'scheduled'),
+
+-- Rodada 10 (April 4-5, 2026)
+  ('football', 'Brasileirão 2026 - Rodada 10', 'São Paulo vs Cruzeiro', 'São Paulo', 'Cruzeiro', '2026-04-04 18:30:00-03', 'scheduled'),
+  ('football', 'Brasileirão 2026 - Rodada 10', 'Coritiba vs Fluminense', 'Coritiba', 'Fluminense', '2026-04-04 20:30:00-03', 'scheduled'),
+  ('football', 'Brasileirão 2026 - Rodada 10', 'Vasco vs Botafogo', 'Vasco', 'Botafogo', '2026-04-04 21:00:00-03', 'scheduled'),
+  ('football', 'Brasileirão 2026 - Rodada 10', 'Chapecoense vs Vitória', 'Chapecoense', 'Vitória', '2026-04-05 16:00:00-03', 'scheduled'),
+  ('football', 'Brasileirão 2026 - Rodada 10', 'Flamengo vs Santos', 'Flamengo', 'Santos', '2026-04-05 17:30:00-03', 'scheduled'),
+  ('football', 'Brasileirão 2026 - Rodada 10', 'Atlético-MG vs Athletico-PR', 'Atlético-MG', 'Athletico-PR', '2026-04-05 17:30:00-03', 'scheduled'),
+  ('football', 'Brasileirão 2026 - Rodada 10', 'Corinthians vs Internacional', 'Corinthians', 'Internacional', '2026-04-05 19:30:00-03', 'scheduled'),
+  ('football', 'Brasileirão 2026 - Rodada 10', 'Bahia vs Palmeiras', 'Bahia', 'Palmeiras', '2026-04-05 19:30:00-03', 'scheduled'),
+  ('football', 'Brasileirão 2026 - Rodada 10', 'Mirassol vs RB Bragantino', 'Mirassol', 'RB Bragantino', '2026-04-05 20:00:00-03', 'scheduled'),
+  ('football', 'Brasileirão 2026 - Rodada 10', 'Grêmio vs Remo', 'Grêmio', 'Remo', '2026-04-05 20:30:00-03', 'scheduled');

@@ -84,11 +84,11 @@ export default function HomePage() {
       <section className="max-w-5xl mx-auto px-4 py-16">
         <div className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20 rounded-2xl p-8 md:p-12 text-center">
           <h2 className="text-3xl font-bold mb-4">
-            A revolução da narração começa aqui
+            A rádio do esporte, reinventada.
           </h2>
           <p className="text-zinc-400 mb-8 max-w-xl mx-auto">
-            Assim como o streaming libertou o video da grade da TV, o Narra
-            liberta a narração do monopólio dos narradores de TV.
+            Ninguém mais precisa ficar preso ao narrador da TV. Mute a TV,
+            escolha a voz, e viva o jogo do seu jeito.
           </p>
           <Link
             href="/matches"
